@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,53 @@ import hallWeddingCeremony from "/lovable-uploads/327986fb-47f0-4684-8bc5-384646
 import hallEventBanner from "/lovable-uploads/c4b55e10-9f8b-42b8-9740-36094e77375c.png";
 import hallGraduationEvent from "/lovable-uploads/c7ecad60-a010-4f99-82a4-0de7078f165a.png";
 import hallPartyDecorations from "/lovable-uploads/41b466a7-ae27-41e7-9fbc-7724abf9bb82.png";
+
+const VideoCard = ({ video, index, onClick }: { video: any, index: number, onClick: () => void }) => {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const videoElement = videoRef.current;
+    if (!videoElement) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            videoElement.play();
+          } else {
+            videoElement.pause();
+          }
+        });
+      },
+      { threshold: 0.5 }
+    );
+
+    observer.observe(videoElement);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
+  return (
+    <Card 
+      className="group overflow-hidden cursor-pointer hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2"
+      onClick={onClick}
+    >
+      <div className="relative aspect-video overflow-hidden">
+        <video
+          ref={videoRef}
+          src={video.src}
+          className="w-full h-full object-cover"
+          muted
+          loop
+          playsInline
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      </div>
+    </Card>
+  );
+};
 
 export const Gallery = () => {
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
@@ -162,27 +209,12 @@ export const Gallery = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {videos.map((video, index) => (
-              <Card 
+              <VideoCard 
                 key={index} 
-                className="group overflow-hidden cursor-pointer hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2"
+                video={video}
+                index={index}
                 onClick={() => setSelectedVideo(index)}
-              >
-                <div className="relative aspect-video overflow-hidden">
-                  <video
-                    src={video.src}
-                    className="w-full h-full object-cover"
-                    muted
-                    playsInline
-                    onMouseEnter={(e) => e.currentTarget.play()}
-                    onMouseLeave={(e) => e.currentTarget.pause()}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                </div>
-                <CardContent className="p-6">
-                  <h3 className="font-semibold text-lg mb-2">{video.title}</h3>
-                  <p className="text-muted-foreground text-sm">{video.description}</p>
-                </CardContent>
-              </Card>
+              />
             ))}
           </div>
         </div>
