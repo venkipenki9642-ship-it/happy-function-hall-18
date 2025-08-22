@@ -1,0 +1,20 @@
+{
+  "name": "Happy Function Hall - Premier Event Venue in Atchutapuram",
+  "short_name": "Happy Function Hall",
+  "description": "Book your perfect event at Happy Function Hall in Atchutapuram. Elegant AC halls for weddings, corporate events, and celebrations.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#f59e0b",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "32x32",
+      "type": "image/x-icon"
+    }
+  ],
+  "categories": ["business", "events", "lifestyle"],
+  "lang": "en",
+  "dir": "ltr"
+}

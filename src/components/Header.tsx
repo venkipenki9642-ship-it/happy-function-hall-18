@@ -13,11 +13,13 @@ export const Header = ({ onBookingClick, onCallClick }: HeaderProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navItems = [
-    { name: "Home", href: "#home" },
-    { name: "About", href: "#about" },
-    { name: "Gallery", href: "#gallery" },
-    { name: "Pricing", href: "#pricing" },
-    { name: "Contact", href: "#contact" },
+    { name: "Home", href: "/" },
+    { name: "About", href: "/#about" },
+    { name: "Services", href: "/services" },
+    { name: "Gallery", href: "/#gallery" },
+    { name: "Pricing", href: "/#pricing" },
+    { name: "Blog", href: "/blog" },
+    { name: "Contact", href: "/#contact" },
   ];
 
   const handleCallClick = () => {
@@ -41,6 +43,13 @@ export const Header = ({ onBookingClick, onCallClick }: HeaderProps) => {
                 key={item.name}
                 href={item.href}
                 className="text-muted-foreground hover:text-foreground transition-colors duration-200"
+                onClick={(e) => {
+                  if (item.href.startsWith('/#')) {
+                    e.preventDefault();
+                    const target = document.querySelector(item.href.substring(1));
+                    if (target) target.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }}
               >
                 {item.name}
               </a>
@@ -92,7 +101,14 @@ export const Header = ({ onBookingClick, onCallClick }: HeaderProps) => {
                 key={item.name}
                 href={item.href}
                 className="text-muted-foreground hover:text-foreground transition-colors duration-200 py-2"
-                onClick={() => setIsMenuOpen(false)}
+                onClick={(e) => {
+                  setIsMenuOpen(false);
+                  if (item.href.startsWith('/#')) {
+                    e.preventDefault();
+                    const target = document.querySelector(item.href.substring(1));
+                    if (target) target.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }}
               >
                 {item.name}
               </a>

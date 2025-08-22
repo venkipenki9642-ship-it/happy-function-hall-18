@@ -12,7 +12,8 @@ export const Hero = ({ onBookingClick }: HeroProps) => {
   };
 
   return (
-    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden"
+             itemScope itemType="https://schema.org/EventVenue">
       {/* Background Image with Overlay */}
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -26,7 +27,8 @@ export const Hero = ({ onBookingClick }: HeroProps) => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center text-white max-w-4xl mx-auto">
           {/* Main Heading */}
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight"
+              itemProp="name">
             <span className="bg-gradient-to-r from-white via-primary to-white bg-clip-text text-transparent">
               ✨ Happy Function Hall ✨
             </span>
@@ -36,9 +38,10 @@ export const Hero = ({ onBookingClick }: HeroProps) => {
           </h1>
           
           {/* Subtitle */}
-          <p className="text-lg md:text-xl lg:text-2xl mb-8 opacity-90 max-w-3xl mx-auto leading-relaxed">
-            Create unforgettable memories in our elegant AC halls in Atchutapuram, 
-            perfect for weddings, corporate events, and special celebrations.
+          <p className="text-lg md:text-xl lg:text-2xl mb-8 opacity-90 max-w-3xl mx-auto leading-relaxed"
+             itemProp="description">
+            Premier wedding venue and event hall in Atchutapuram, Andhra Pradesh. 
+            Elegant AC halls perfect for weddings, corporate events, birthday parties, and special celebrations.
           </p>
           
           {/* Features */}
