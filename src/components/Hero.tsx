@@ -72,7 +72,7 @@ export const Hero = ({ onBookingClick }: HeroProps) => {
               variant="outline"
               size="xl"
               onClick={handleCallClick}
-              className="w-full sm:w-auto min-w-[200px] border-white text-white hover:bg-white hover:text-accent transition-colors"
+              className="w-full sm:w-auto min-w-[200px] border-primary text-primary hover:bg-primary hover:text-primary-foreground"
             >
               <Phone className="h-5 w-5 mr-2" />
               Call Now
