@@ -55,21 +55,36 @@ export const Gallery = () => {
     }
   ];
 
-  const instagramReels = [
+  const videos = [
     {
-      embedUrl: "https://www.instagram.com/reel/C8YqQJtRBQs/embed",
-      title: "Wedding Setup",
-      description: "Beautiful wedding ceremony setup at Happy Function Hall"
+      src: "/videos/comp3.mp4",
+      title: "Event Highlights",
+      description: "Beautiful moments from our venue events"
     },
     {
-      embedUrl: "https://www.instagram.com/reel/C7pLMNsRVKm/embed", 
-      title: "Birthday Celebration",
-      description: "Colorful birthday party decorations"
+      src: "/videos/comp4.mp4",
+      title: "Celebration Moments",
+      description: "Special occasions celebrated at our venue"
     },
     {
-      embedUrl: "https://www.instagram.com/reel/C6hJKLmRqWx/embed",
-      title: "Corporate Event",
-      description: "Professional event setup"
+      src: "/videos/comp5.mp4",
+      title: "Function Setup",
+      description: "Professional event arrangements and setup"
+    },
+    {
+      src: "/videos/comp6.mp4",
+      title: "Party Moments",
+      description: "Joyful celebrations and party highlights"
+    },
+    {
+      src: "/videos/comp7.mp4",
+      title: "Event Coverage",
+      description: "Comprehensive coverage of our events"
+    },
+    {
+      src: "/videos/compress2.mp4",
+      title: "Special Events",
+      description: "Memorable moments from special occasions"
     }
   ];
 
@@ -131,40 +146,41 @@ export const Gallery = () => {
           ))}
         </div>
 
-        {/* Instagram Reels Section */}
+        {/* Videos Section */}
         <div className="mt-20">
           <div className="text-center mb-16">
             <Badge variant="outline" className="mb-4">
-              Instagram Reels
+              Videos
             </Badge>
             <h3 className="text-2xl md:text-3xl font-bold mb-4">
-              Live from Our Events
+              Event Highlights
             </h3>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              See our latest events and celebrations on Instagram
+              Watch highlights from our beautiful events and celebrations
             </p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {instagramReels.map((reel, index) => (
+            {videos.map((video, index) => (
               <Card 
                 key={index} 
                 className="group overflow-hidden cursor-pointer hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2"
                 onClick={() => setSelectedVideo(index)}
               >
-                <div className="relative aspect-[9/16] overflow-hidden">
-                  <iframe
-                    src={reel.embedUrl}
+                <div className="relative aspect-video overflow-hidden">
+                  <video
+                    src={video.src}
                     className="w-full h-full object-cover"
-                    frameBorder="0"
-                    scrolling="no"
-                    allowTransparency={true}
+                    muted
+                    playsInline
+                    onMouseEnter={(e) => e.currentTarget.play()}
+                    onMouseLeave={(e) => e.currentTarget.pause()}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </div>
                 <CardContent className="p-6">
-                  <h3 className="font-semibold text-lg mb-2">{reel.title}</h3>
-                  <p className="text-muted-foreground text-sm">{reel.description}</p>
+                  <h3 className="font-semibold text-lg mb-2">{video.title}</h3>
+                  <p className="text-muted-foreground text-sm">{video.description}</p>
                 </CardContent>
               </Card>
             ))}
@@ -227,7 +243,7 @@ export const Gallery = () => {
 
         {/* Video Modal */}
         <Dialog open={selectedVideo !== null} onOpenChange={() => setSelectedVideo(null)}>
-          <DialogContent className="max-w-md p-0 bg-black/95 border-0">
+          <DialogContent className="max-w-4xl p-0 bg-black/95 border-0">
             {selectedVideo !== null && (
               <div className="relative">
                 <Button
@@ -239,12 +255,11 @@ export const Gallery = () => {
                   <X className="h-4 w-4" />
                 </Button>
                 
-                <iframe
-                  src={instagramReels[selectedVideo].embedUrl}
-                  className="w-full h-[600px]"
-                  frameBorder="0"
-                  scrolling="no"
-                  allowTransparency={true}
+                <video
+                  src={videos[selectedVideo].src}
+                  className="w-full h-auto max-h-[80vh] object-contain"
+                  controls
+                  autoPlay
                 />
               </div>
             )}
