@@ -8,6 +8,7 @@ import { Contact } from "@/components/Contact";
 import { Footer } from "@/components/Footer";
 import { BookingModal } from "@/components/BookingModal";
 import { Chatbot } from "@/components/Chatbot";
+import { SEOHead } from "@/components/SEOHead";
 
 const Index = () => {
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
@@ -22,6 +23,12 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title="Happy Function Hall, Visakhapatnam | Weddings & Events Venue"
+        description="Book Happy Function Hall in Visakhapatnam for weddings, receptions, birthdays, and corporate events. Spacious hall, AC, parking, and best amenities."
+        keywords="function hall visakhapatnam, wedding venue vizag, event hall booking, happy function hall, party venue visakhapatnam"
+        canonical="https://happy-function-hall-18.lovable.app/"
+      />
       <Header 
         onBookingClick={handleBookingClick}
         onCallClick={handleCallClick}

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { BookingModal } from "@/components/BookingModal";
 import { Calendar, Clock, ArrowRight } from "lucide-react";
+import { SEOHead } from "@/components/SEOHead";
 
 const Blog = () => {
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
@@ -65,6 +66,12 @@ const Blog = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title="Event Planning Blog | Happy Function Hall Tips & Ideas"
+        description="Expert event planning tips, wedding ideas, and celebration inspiration from Happy Function Hall. Get professional advice for your perfect event in Visakhapatnam."
+        keywords="event planning blog, wedding tips, party planning, function hall advice, visakhapatnam events, celebration ideas"
+        canonical="https://happy-function-hall-18.lovable.app/blog"
+      />
       <Header 
         onBookingClick={() => setIsBookingModalOpen(true)}
         onCallClick={() => window.location.href = "tel:9677352267"}

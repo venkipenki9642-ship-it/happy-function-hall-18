@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { BookingModal } from "@/components/BookingModal";
 import { Calendar, Users, Utensils, Music, Mic, Car, Shield, Clock } from "lucide-react";
+import { SEOHead } from "@/components/SEOHead";
 
 const Services = () => {
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
@@ -50,6 +51,12 @@ const Services = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title="Happy Function Hall Services | Weddings, Corporate Events & More"
+        description="Comprehensive event services at Happy Function Hall in Visakhapatnam. Wedding ceremonies, corporate events, birthday parties, and cultural celebrations with professional amenities."
+        keywords="wedding services, corporate events, birthday parties, cultural events, function hall services, visakhapatnam event venue"
+        canonical="https://happy-function-hall-18.lovable.app/services"
+      />
       <Header 
         onBookingClick={() => setIsBookingModalOpen(true)}
         onCallClick={() => window.location.href = "tel:9677352267"}
