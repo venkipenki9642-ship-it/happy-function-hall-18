@@ -200,10 +200,17 @@ export const BookingModal = ({ isOpen, onClose }: BookingModalProps) => {
                 <Input
                   id="phone"
                   type="tel"
-                  placeholder="Enter your phone number"
+                  placeholder="Enter 10-digit phone number"
                   value={contactInfo.phone}
-                  onChange={(e) => setContactInfo({...contactInfo, phone: e.target.value})}
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/\D/g, '').slice(0, 10);
+                    setContactInfo({...contactInfo, phone: value});
+                  }}
+                  maxLength={10}
                 />
+                {contactInfo.phone && contactInfo.phone.length !== 10 && (
+                  <p className="text-sm text-destructive mt-1">Phone number must be exactly 10 digits</p>
+                )}
               </div>
               
               <div>
@@ -233,7 +240,7 @@ export const BookingModal = ({ isOpen, onClose }: BookingModalProps) => {
                 </Button>
                 <Button 
                   onClick={handleNext}
-                  disabled={!eventType || !guestCount || !contactInfo.name || !contactInfo.phone}
+                  disabled={!eventType || !guestCount || !contactInfo.name || !contactInfo.phone || contactInfo.phone.length !== 10}
                 >
                   Next
                 </Button>
