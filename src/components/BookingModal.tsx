@@ -15,6 +15,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { CalendarIcon, Clock, CreditCard, CheckCircle } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import { bookingService } from "@/lib/supabase";
+import { toast } from "@/hooks/use-toast";
 
 interface BookingModalProps {
   isOpen: boolean;
@@ -33,6 +35,7 @@ export const BookingModal = ({ isOpen, onClose }: BookingModalProps) => {
     email: "",
     message: ""
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const timeSlots = [
     "9:00 AM - 1:00 PM",
@@ -67,25 +70,61 @@ export const BookingModal = ({ isOpen, onClose }: BookingModalProps) => {
     }
   };
 
-  const handleBooking = () => {
-    // Simulate booking confirmation
-    setStep(4);
-    setTimeout(() => {
-      onClose();
-      setStep(1);
-      setSelectedDate(undefined);
-      setSelectedTime("");
-      setEventType("");
-      setGuestCount("");
-      setContactInfo({ name: "", phone: "", email: "", message: "" });
-    }, 3000);
-  };
+const handleBooking = async () => {
+  try {
+    setIsSubmitting(true);
+    const booking = await bookingService.createBooking({
+      event_date: selectedDate ? format(selectedDate, "yyyy-MM-dd") : "",
+      event_time: selectedTime,
+      event_type: eventType,
+      guest_count: parseInt(guestCount, 10),
+      customer_name: contactInfo.name,
+      customer_email: contactInfo.email,
+      customer_phone: contactInfo.phone,
+      status: 'pending',
+      special_requests: contactInfo.message,
+    });
 
-  const handlePayment = () => {
-    // This would integrate with actual payment gateway
-    alert("Redirecting to payment gateway...");
-    handleBooking();
-  };
+    // Fire-and-forget email; errors won't block booking flow
+    try {
+      await bookingService.sendBookingEmail({
+        customerName: contactInfo.name,
+        customerEmail: contactInfo.email,
+        eventDate: selectedDate ? format(selectedDate, "PPP") : "",
+        eventTime: selectedTime,
+        eventType,
+        guestCount: parseInt(guestCount, 10),
+        bookingId: booking.id,
+      });
+    } catch (e) {
+      console.error('Email send failed', e);
+    }
+
+    toast({
+      title: "Booking confirmed",
+      description: "We sent a confirmation email. We'll contact you soon.",
+    });
+
+    setStep(4);
+  } catch (err: any) {
+    console.error(err);
+    toast({
+      title: "Booking failed",
+      description: err?.message || "Please try again.",
+      variant: "destructive",
+    });
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
+const handlePayment = async () => {
+  toast({
+    title: "Online payment not set up",
+    description: "UPI/Google Pay/Amazon Pay will be added. Booking saved as Pay Later.",
+  });
+  await handleBooking();
+};
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -275,11 +314,11 @@ export const BookingModal = ({ isOpen, onClose }: BookingModalProps) => {
                   You can pay the booking amount now or contact us to discuss payment terms.
                 </p>
                 <div className="space-y-2">
-                  <Button onClick={handlePayment} className="w-full">
-                    Pay Now (Online Payment)
+<Button onClick={handlePayment} className="w-full" disabled={isSubmitting}>
+                    {isSubmitting ? "Processing..." : "Pay Now (Online Payment)"}
                   </Button>
-                  <Button variant="outline" onClick={handleBooking} className="w-full">
-                    Book Now (Pay Later)
+                  <Button variant="outline" onClick={handleBooking} className="w-full" disabled={isSubmitting}>
+                    {isSubmitting ? "Processing..." : "Book Now (Pay Later)"}
                   </Button>
                 </div>
               </div>
