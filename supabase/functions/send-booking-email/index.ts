@@ -20,15 +20,33 @@ interface BookingEmailRequest {
 }
 
 const handler = async (req: Request): Promise<Response> => {
+  console.log("Edge function called - send-booking-email");
+  
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
+    console.log("Handling CORS preflight");
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
     const bookingData: BookingEmailRequest = await req.json();
-    console.log("Received booking data:", bookingData);
+    console.log("Received booking data:", JSON.stringify(bookingData, null, 2));
 
+
+    // Check if RESEND_API_KEY is configured
+    const resendKey = Deno.env.get("RESEND_API_KEY");
+    if (!resendKey) {
+      console.error("RESEND_API_KEY is not configured");
+      return new Response(
+        JSON.stringify({ error: "Email service not configured" }),
+        {
+          status: 500,
+          headers: { "Content-Type": "application/json", ...corsHeaders },
+        }
+      );
+    }
+    console.log("RESEND_API_KEY is configured");
+    
     const { name, email, phone, eventType, eventDate, timeSlot, guestCount, message } = bookingData;
 
     // Email HTML template

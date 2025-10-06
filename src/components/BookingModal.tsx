@@ -72,11 +72,22 @@ export const BookingModal = ({ isOpen, onClose }: BookingModalProps) => {
   };
 
   const handleBooking = async () => {
+    console.log("Starting booking process...");
     setIsSubmitting(true);
     
     try {
+      console.log("Calling send-booking-email function with data:", {
+        name: contactInfo.name,
+        email: contactInfo.email,
+        phone: contactInfo.phone,
+        eventType: eventType,
+        eventDate: selectedDate ? format(selectedDate, "PPP") : "",
+        timeSlot: selectedTime,
+        guestCount: guestCount,
+      });
+      
       // Send booking email
-      const { error } = await supabase.functions.invoke('send-booking-email', {
+      const { data, error } = await supabase.functions.invoke('send-booking-email', {
         body: {
           name: contactInfo.name,
           email: contactInfo.email,
@@ -88,6 +99,8 @@ export const BookingModal = ({ isOpen, onClose }: BookingModalProps) => {
           message: contactInfo.message
         }
       });
+
+      console.log("Edge function response:", { data, error });
 
       if (error) {
         console.error("Error sending booking email:", error);
