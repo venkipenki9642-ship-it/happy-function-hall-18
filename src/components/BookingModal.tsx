@@ -15,6 +15,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { CalendarIcon, Clock, CreditCard, CheckCircle } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface BookingModalProps {
   isOpen: boolean;
@@ -22,11 +24,13 @@ interface BookingModalProps {
 }
 
 export const BookingModal = ({ isOpen, onClose }: BookingModalProps) => {
+  const { toast } = useToast();
   const [step, setStep] = useState(1);
   const [selectedDate, setSelectedDate] = useState<Date>();
   const [selectedTime, setSelectedTime] = useState("");
   const [eventType, setEventType] = useState("");
   const [guestCount, setGuestCount] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [contactInfo, setContactInfo] = useState({
     name: "",
     phone: "",
@@ -67,23 +71,68 @@ export const BookingModal = ({ isOpen, onClose }: BookingModalProps) => {
     }
   };
 
-  const handleBooking = () => {
-    // Simulate booking confirmation
-    setStep(4);
-    setTimeout(() => {
-      onClose();
-      setStep(1);
-      setSelectedDate(undefined);
-      setSelectedTime("");
-      setEventType("");
-      setGuestCount("");
-      setContactInfo({ name: "", phone: "", email: "", message: "" });
-    }, 3000);
+  const handleBooking = async () => {
+    setIsSubmitting(true);
+    
+    try {
+      // Send booking email
+      const { error } = await supabase.functions.invoke('send-booking-email', {
+        body: {
+          name: contactInfo.name,
+          email: contactInfo.email,
+          phone: contactInfo.phone,
+          eventType: eventType,
+          eventDate: selectedDate ? format(selectedDate, "PPP") : "",
+          timeSlot: selectedTime,
+          guestCount: guestCount,
+          message: contactInfo.message
+        }
+      });
+
+      if (error) {
+        console.error("Error sending booking email:", error);
+        toast({
+          title: "Error",
+          description: "Failed to send booking confirmation. Please try again.",
+          variant: "destructive",
+        });
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Show success
+      setStep(4);
+      toast({
+        title: "Success!",
+        description: "Booking confirmation sent to your email.",
+      });
+
+      setTimeout(() => {
+        onClose();
+        setStep(1);
+        setSelectedDate(undefined);
+        setSelectedTime("");
+        setEventType("");
+        setGuestCount("");
+        setContactInfo({ name: "", phone: "", email: "", message: "" });
+        setIsSubmitting(false);
+      }, 3000);
+    } catch (error) {
+      console.error("Booking error:", error);
+      toast({
+        title: "Error",
+        description: "Something went wrong. Please try again.",
+        variant: "destructive",
+      });
+      setIsSubmitting(false);
+    }
   };
 
   const handlePayment = () => {
-    // This would integrate with actual payment gateway
-    alert("Redirecting to payment gateway...");
+    toast({
+      title: "Coming Soon",
+      description: "Online payment integration will be available soon. Proceeding with booking...",
+    });
     handleBooking();
   };
 
@@ -159,8 +208,8 @@ export const BookingModal = ({ isOpen, onClose }: BookingModalProps) => {
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <Label htmlFor="eventType">Event Type</Label>
-                <Select value={eventType} onValueChange={setEventType}>
+                <Label htmlFor="eventType">Event Type *</Label>
+                <Select value={eventType} onValueChange={setEventType} required>
                   <SelectTrigger>
                     <SelectValue placeholder="Select event type" />
                   </SelectTrigger>
@@ -175,28 +224,30 @@ export const BookingModal = ({ isOpen, onClose }: BookingModalProps) => {
               </div>
               
               <div>
-                <Label htmlFor="guests">Expected Number of Guests</Label>
+                <Label htmlFor="guests">Expected Number of Guests *</Label>
                 <Input
                   id="guests"
                   type="number"
                   placeholder="e.g., 200"
                   value={guestCount}
                   onChange={(e) => setGuestCount(e.target.value)}
+                  required
                 />
               </div>
               
               <div>
-                <Label htmlFor="name">Your Name</Label>
+                <Label htmlFor="name">Your Name *</Label>
                 <Input
                   id="name"
                   placeholder="Enter your full name"
                   value={contactInfo.name}
                   onChange={(e) => setContactInfo({...contactInfo, name: e.target.value})}
+                  required
                 />
               </div>
               
               <div>
-                <Label htmlFor="phone">Phone Number</Label>
+                <Label htmlFor="phone">Phone Number *</Label>
                 <Input
                   id="phone"
                   type="tel"
@@ -207,6 +258,7 @@ export const BookingModal = ({ isOpen, onClose }: BookingModalProps) => {
                     setContactInfo({...contactInfo, phone: value});
                   }}
                   maxLength={10}
+                  required
                 />
                 {contactInfo.phone && contactInfo.phone.length !== 10 && (
                   <p className="text-sm text-destructive mt-1">Phone number must be exactly 10 digits</p>
@@ -214,14 +266,18 @@ export const BookingModal = ({ isOpen, onClose }: BookingModalProps) => {
               </div>
               
               <div>
-                <Label htmlFor="email">Email Address</Label>
+                <Label htmlFor="email">Email Address *</Label>
                 <Input
                   id="email"
                   type="email"
-                  placeholder="Enter your email"
+                  placeholder="Enter your Gmail address"
                   value={contactInfo.email}
                   onChange={(e) => setContactInfo({...contactInfo, email: e.target.value})}
+                  required
                 />
+                {contactInfo.email && !contactInfo.email.endsWith('@gmail.com') && (
+                  <p className="text-sm text-destructive mt-1">Email must be a Gmail address (@gmail.com)</p>
+                )}
               </div>
               
               <div>
@@ -240,7 +296,15 @@ export const BookingModal = ({ isOpen, onClose }: BookingModalProps) => {
                 </Button>
                 <Button 
                   onClick={handleNext}
-                  disabled={!eventType || !guestCount || !contactInfo.name || !contactInfo.phone || contactInfo.phone.length !== 10}
+                  disabled={
+                    !eventType || 
+                    !guestCount || 
+                    !contactInfo.name || 
+                    !contactInfo.phone || 
+                    contactInfo.phone.length !== 10 ||
+                    !contactInfo.email ||
+                    !contactInfo.email.endsWith('@gmail.com')
+                  }
                 >
                   Next
                 </Button>
@@ -275,11 +339,11 @@ export const BookingModal = ({ isOpen, onClose }: BookingModalProps) => {
                   You can pay the booking amount now or contact us to discuss payment terms.
                 </p>
                 <div className="space-y-2">
-                  <Button onClick={handlePayment} className="w-full">
-                    Pay Now (Online Payment)
+                  <Button onClick={handlePayment} className="w-full" disabled={isSubmitting}>
+                    {isSubmitting ? "Processing..." : "Pay Now (Online Payment)"}
                   </Button>
-                  <Button variant="outline" onClick={handleBooking} className="w-full">
-                    Book Now (Pay Later)
+                  <Button variant="outline" onClick={handleBooking} className="w-full" disabled={isSubmitting}>
+                    {isSubmitting ? "Processing..." : "Book Now (Pay Later)"}
                   </Button>
                 </div>
               </div>
