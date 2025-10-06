@@ -24,9 +24,9 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <SEOHead
-        title="Happy Function Hall, Visakhapatnam | Weddings & Events Venue"
-        description="Book Happy Function Hall in Visakhapatnam for weddings, receptions, birthdays, and corporate events. Spacious hall, AC, parking, and best amenities."
-        keywords="function hall visakhapatnam, wedding venue vizag, event hall booking, happy function hall, party venue visakhapatnam"
+        title="Happy Function Hall, Atchuthapuram | Weddings & Events Venue"
+        description="Book Happy Function Hall in Atchuthapuram for weddings, receptions, birthdays, and corporate events. Spacious hall, AC, parking, and best amenities."
+        keywords="function hall Atchuthapuram, wedding venue Atchuthapuram, event hall booking, happy function hall, party venue Atchuthapuram"
         canonical="https://happy-function-hall-18.lovable.app/"
       />
       <Header 
