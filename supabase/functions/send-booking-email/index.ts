@@ -136,10 +136,10 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log("Customer email sent:", customerEmailResponse);
 
-    // Send notification email to admin (also to verified email in test mode)
+    // Send notification email to admin
     const adminEmailResponse = await resend.emails.send({
       from: "Happy Function Hall <onboarding@resend.dev>",
-      to: ["venkipenki9642@gmail.com"], // Verified email in test mode
+      to: ["somesh.kandregula@gmail.com"],
       subject: `[ADMIN] New Booking: ${eventType} on ${eventDate} - Customer: ${email}`,
       html: emailHTML,
     });
