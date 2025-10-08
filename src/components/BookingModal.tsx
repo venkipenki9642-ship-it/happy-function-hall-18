@@ -142,11 +142,20 @@ export const BookingModal = ({ isOpen, onClose }: BookingModalProps) => {
   };
 
   const handlePayment = () => {
-    toast({
-      title: "Coming Soon",
-      description: "Online payment integration will be available soon. Proceeding with booking...",
-    });
-    handleBooking();
+    // Redirect to PhonePe UPI payment
+    const upiId = "9677352267@ybl"; // PhonePe UPI ID
+    const name = "Happy Function Hall";
+    const amount = "1000"; // You can make this dynamic based on event type/guests
+    
+    const upiUrl = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(name)}&am=${amount}&cu=INR`;
+    
+    // Try to open UPI app
+    window.location.href = upiUrl;
+    
+    // Also proceed with booking after a short delay
+    setTimeout(() => {
+      handleBooking();
+    }, 2000);
   };
 
   return (
