@@ -103,11 +103,11 @@ const handler = async (req: Request): Promise<Response> => {
       </div>
     `;
 
-    // Temporarily sending both emails to verified address for testing
+    // Send confirmation email to the customer
     const customerEmailResponse = await resend.emails.send({
       from: "Happy Function Hall <onboarding@resend.dev>",
-      to: ["venkipenki9642@gmail.com"],
-      subject: `Booking Confirmation for ${name} (${email})`,
+      to: [email],
+      subject: "Booking Confirmation - Happy Function Hall",
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h1 style="color: #4CAF50;">Thank you for your booking!</h1>
@@ -121,7 +121,6 @@ const handler = async (req: Request): Promise<Response> => {
             <p><strong>Date:</strong> ${eventDate}</p>
             <p><strong>Time:</strong> ${timeSlot}</p>
             <p><strong>Guests:</strong> ${guestCount}</p>
-            ${message ? `<p><strong>Special Requirements:</strong> ${message}</p>` : ''}
           </div>
           
           <p>If you have any questions, please contact us at:</p>
@@ -134,11 +133,11 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log("Customer email sent:", customerEmailResponse);
 
-    // Send admin notification to same verified email (temporarily)
+    // Send notification email to admin
     const adminEmailResponse = await resend.emails.send({
       from: "Happy Function Hall <onboarding@resend.dev>",
-      to: ["venkipenki9642@gmail.com"],
-      subject: `[ADMIN] New Booking: ${eventType} on ${eventDate} - Customer: ${email}`,
+      to: ["somesh.kandregula@gmail.com"],
+      subject: `New Booking: ${eventType} on ${eventDate}`,
       html: emailHTML,
     });
 
