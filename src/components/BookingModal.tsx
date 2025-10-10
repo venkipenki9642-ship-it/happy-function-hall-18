@@ -303,12 +303,13 @@ export const BookingModal = ({ isOpen, onClose }: BookingModalProps) => {
               </div>
               
               <div>
-                <Label htmlFor="message">Special Requirements (Optional)</Label>
+                <Label htmlFor="message">Special Requirements *</Label>
                 <Textarea
                   id="message"
                   placeholder="Any special requirements or additional information"
                   value={contactInfo.message}
                   onChange={(e) => setContactInfo({...contactInfo, message: e.target.value})}
+                  required
                 />
               </div>
               
@@ -325,7 +326,8 @@ export const BookingModal = ({ isOpen, onClose }: BookingModalProps) => {
                     !contactInfo.phone || 
                     contactInfo.phone.length !== 10 ||
                     !contactInfo.email ||
-                    !contactInfo.email.endsWith('@gmail.com')
+                    !contactInfo.email.endsWith('@gmail.com') ||
+                    !contactInfo.message.trim()
                   }
                 >
                   Next
