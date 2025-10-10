@@ -103,13 +103,16 @@ const handler = async (req: Request): Promise<Response> => {
       </div>
     `;
 
-    // Send confirmation email to the customer
+    // In test mode, send all emails to verified address with customer details in subject/body
     const customerEmailResponse = await resend.emails.send({
       from: "Happy Function Hall <onboarding@resend.dev>",
-      to: [email],
-      subject: "Booking Confirmation - Happy Function Hall",
+      to: ["venkipenki9642@gmail.com"], // Verified email in test mode
+      subject: `[TEST] Booking Confirmation for ${name} (${email})`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="background: #ffeb3b; padding: 10px; margin-bottom: 20px;">
+            <strong>TEST MODE:</strong> This email should go to: ${email}
+          </div>
           <h1 style="color: #4CAF50;">Thank you for your booking!</h1>
           <p>Dear ${name},</p>
           <p>We have received your booking request for <strong>${eventType}</strong> on <strong>${eventDate}</strong>.</p>
@@ -133,11 +136,11 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log("Customer email sent:", customerEmailResponse);
 
-    // Send notification email to admin
+    // Send notification email to admin (also to verified email in test mode)
     const adminEmailResponse = await resend.emails.send({
       from: "Happy Function Hall <onboarding@resend.dev>",
-      to: ["somesh.kandregula@gmail.com"],
-      subject: `New Booking: ${eventType} on ${eventDate}`,
+      to: ["venkipenki9642@gmail.com"], // Verified email in test mode
+      subject: `[ADMIN] New Booking: ${eventType} on ${eventDate} - Customer: ${email}`,
       html: emailHTML,
     });
 
